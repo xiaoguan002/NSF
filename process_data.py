@@ -12,7 +12,7 @@ def build_data_cv(cv=10, clean_string=True):
     """
 
     try:
-        conn=MySQLdb.connect(host='162.105.71.14',user='root',passwd='',db='nsf',port=3306)
+        conn=MySQLdb.connect('private')
         cur=conn.cursor()
 
         cur.execute('select AbstractNarration, OrganizationDivisionLongName from nsfmain')
