@@ -1,6 +1,4 @@
 """
-THEANO_FLAGS=mode=FAST_RUN,device=gpu,floatX=float32 python imdb_cnn.py
-Sample code for
 Convolutional Neural Networks for Sentence Classification
 http://arxiv.org/pdf/1408.5882v2.pdf
 
