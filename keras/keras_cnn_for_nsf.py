@@ -12,8 +12,6 @@ import cPickle
 from keras.utils import np_utils
 from keras.regularizers import l2, activity_l2
 from keras.models import model_from_json
-import theano
-import keras.callbacks
 import string
 
 
@@ -22,11 +20,11 @@ import string
 
 batch_size = 50
 embedding_dims = 300
-nb_filter = 300
-filter_length = 3
-hidden_dims = 200
+nb_filter = 300  #卷积核个数
+filter_length = 3  #卷积核长度
+hidden_dims = 200   #隐层数
 nb_epoch = 20
-nb_classes = 4
+nb_classes = 4  #分类数
 
 x = cPickle.load(open("mr.p","rb"))
 revs, W, W2, word_idx_map, vocab, maxlen = x[0], x[1], x[2], x[3], x[4], x[5]
@@ -103,7 +101,6 @@ model = Sequential()
 # we start off with an efficient embedding layer which maps
 # our vocab indices into embedding_dims dimensions
 model.add(Embedding(input_dim=max_features+1, output_dim=embedding_dims,weights=[embedding_weights], input_length=maxlen))
-model.add(Dropout(0.25))
 
 # we add a Convolution1D, which will learn nb_filter
 # word group filters of size filter_length:
@@ -125,7 +122,7 @@ model.add(Dropout(0.25))
 model.add(Activation('relu'))
 
 # We project onto a single unit output layer, and squash it with a sigmoid:
-model.add(Dense(4))
+model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy',
@@ -149,26 +146,9 @@ for i in range(nb_epoch):
     f.writelines(his+'\n')
 
 
-score = model.evaluate(X_test, Y_test, show_accuracy=True, verbose=0)
+score = model.evaluate(X_test, Y_test, verbose=0, batch_size = batch_size)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
 f.write(str('\n' + "Test score : " + str(score[0]) +'\n'))
 f.write(str("Test accuracy : " + str(score[1]) +'\n'))
 f.close()
-
-'''
-get_layer_output9 =theano.function([model.layers[0].input],model.layers[9].get_output(train=False))
-
-model_output7=[]
-model_output8=[]
-model_output9=[]
-for r in range(X.shape[0]):
-
-
-    model_output9.append(get_layer_output9(X[r,:].reshape(1,X.shape[1])))
-
-
-cPickle.dump([Y_label,model_output7,model_output8, model_output9 ], open("f.p", "wb"))
-
-print ("model created!")
-'''
